@@ -155,7 +155,7 @@ def process_sample(args,sample,kg):
     response_synthesizer = get_response_synthesizer(response_mode=ResponseMode.COMPACT,text_qa_template=qa_rag_prompt_template)
 
     expansion_pp = KGRetrievePostProcessor(dataset=args.dataset,ents=ents,doc2kg=subkg,chunks_index=chunks_index)
-    bge_reranker = FlagReranker(model_name_or_path=args.reranker,device=3)
+    bge_reranker = FlagReranker(model_name_or_path=args.reranker, devices=None)
     filter_pp = GraphFilterPostProcessor(dataset=args.dataset,use_tpt=args.use_tpt,topk=args.top_k,ents=ents,doc2kg=subkg,chunks_index=chunks_index,reranker=bge_reranker)
     naive_pp = NaivePostprocessor(dataset=args.dataset)
     query_engine = RetrieverQueryEngine(retriever=retriever,response_synthesizer=response_synthesizer,node_postprocessors=[expansion_pp,filter_pp,naive_pp])

@@ -8,7 +8,7 @@ def create_subset():
     with open(input_path, 'r', encoding='utf-8') as f:
         data = json.load(f)
         
-    subset = data[:5]
+    subset = data[:50]
     print(f"Extracted {len(subset)} samples. Saving to {output_path}...")
     with open(output_path, 'w', encoding='utf-8') as f:
         json.dump(subset, f, indent=2, ensure_ascii=False)

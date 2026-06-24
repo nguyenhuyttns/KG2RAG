@@ -12,10 +12,10 @@ from llama_index.core.retrievers import VectorIndexRetriever
 from llama_index.core.query_engine import RetrieverQueryEngine
 from llama_index.core.response_synthesizers import ResponseMode
 from llama_index.embeddings.ollama import OllamaEmbedding
-from util.kg_post_processor import NaivePostprocessor,KGRetrievePostProcessor,ngram_overlap,GraphFilterPostProcessor,KGIntraInterPostProcessor
+from util.kg_post_processor import NaivePostprocessor,KGRetrievePostProcessor,ngram_overlap,GraphFilterPostProcessor
 from util.kg_response_synthesizer import get_response_synthesizer
 
-def kg_rag_parallel(data, doc2kg, top_k=5, workers=4,persist_dir=None,reranker='../model/bge-reranker-large'):
+def kg_rag_parallel(data, doc2kg, dataset='hotpotqa', use_tpt=False, top_k=5, workers=4,persist_dir=None,reranker='../model/bge-reranker-large'):
     prediction = {'answer': {}, 'sp': {}}
 
     doc_chunks = []
@@ -48,11 +48,11 @@ def kg_rag_parallel(data, doc2kg, top_k=5, workers=4,persist_dir=None,reranker='
     qa_rag_prompt_template = PromptTemplate(qa_rag_template_str)
     response_synthesizer = get_response_synthesizer(response_mode=ResponseMode.COMPACT,text_qa_template=qa_rag_prompt_template)
     
-    kg_post_processor1 = KGRetrievePostProcessor(ents=ents,doc2kg=doc2kg,chunks_index=chunks_index)
+    kg_post_processor1 = KGRetrievePostProcessor(dataset=dataset,ents=ents,doc2kg=doc2kg,chunks_index=chunks_index)
     bge_reranker = FlagReranker(model_name_or_path=reranker)
-    kg_post_processor2 = GraphFilterPostProcessor(topk=top_k,ents=ents,doc2kg=doc2kg,chunks_index=chunks_index,reranker=bge_reranker)
+    kg_post_processor2 = GraphFilterPostProcessor(dataset=dataset,use_tpt=use_tpt,topk=top_k,ents=ents,doc2kg=doc2kg,chunks_index=chunks_index,reranker=bge_reranker)
 
-    engine = RetrieverQueryEngine(retriever=retriever,response_synthesizer=response_synthesizer,node_postprocessors=[kg_post_processor1,kg_post_processor2,NaivePostprocessor()])
+    engine = RetrieverQueryEngine(retriever=retriever,response_synthesizer=response_synthesizer,node_postprocessors=[kg_post_processor1,kg_post_processor2,NaivePostprocessor(dataset=dataset)])
 
     test_size = len(data)
 
@@ -116,7 +116,9 @@ def main(args):
     workers = args.num_workers
     persist_dir = args.persist_dir
     reranker = args.reranker
-    prediction = kg_rag_parallel(data,doc2kg,top_k=top_k,workers=workers,persist_dir=persist_dir,reranker=reranker)
+    dataset = args.dataset
+    use_tpt = args.use_tpt
+    prediction = kg_rag_parallel(data,doc2kg,dataset=dataset,use_tpt=use_tpt,top_k=top_k,workers=workers,persist_dir=persist_dir,reranker=reranker)
 
     result_path = args.result_path
     with open(result_path,'w',encoding='utf-8') as f:
@@ -124,6 +126,9 @@ def main(args):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
+
+    parser.add_argument('--dataset',type=str,default='hotpotqa',help='Dataset name')
+    parser.add_argument('--use_tpt',type=bool,default=False,help='Whether to use triplet representation')
 
     # hotpot full
     parser.add_argument('--data_path',type=str,default='../data/hotpotqa/hotpot_dev_distractor_v1.json',help='Path to the data file')

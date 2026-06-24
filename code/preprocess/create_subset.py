@@ -1,8 +1,10 @@
+import os
 import json
 
 def create_subset():
-    input_path = '../../data/hotpotqa/hotpot_dev_distractor_v1.json'
-    output_path = '../../data/hotpotqa/hotpot_dev_distractor_test.json'
+    base_dir = os.path.dirname(os.path.abspath(__file__))
+    input_path = os.path.normpath(os.path.join(base_dir, '../../data/hotpotqa/hotpot_dev_distractor_v1.json'))
+    output_path = os.path.normpath(os.path.join(base_dir, '../../data/hotpotqa/hotpot_dev_distractor_test.json'))
     
     print(f"Reading dataset from {input_path}...")
     with open(input_path, 'r', encoding='utf-8') as f:

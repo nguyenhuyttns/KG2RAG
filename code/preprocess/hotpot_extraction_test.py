@@ -34,7 +34,7 @@ with open(data_path, encoding='utf-8') as f:
 
 triplets = {}
 # Using llama3.2 (3B) instead of llama3:8b
-llm = Ollama(model='llama3.2',request_timeout=120)
+llm = Ollama(model='llama3.2',request_timeout=600.0)
 out_dir = '../../data/hotpotqa/kgs/extract_subkgs'
 os.makedirs(out_dir, exist_ok=True)
 count = 0

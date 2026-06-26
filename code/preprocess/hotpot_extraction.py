@@ -33,7 +33,7 @@ with open(data_path) as f:
     data = json.load(f)
 
 triplets = {}
-llm = Ollama(model='llama3:8b',request_timeout=120)
+llm = Ollama(model='llama3:8b',request_timeout=600.0)
 out_dir = '../../data/hotpotqa/kgs/extract_subkgs'
 count = 0
 

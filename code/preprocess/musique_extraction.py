@@ -97,7 +97,7 @@ def extract_triplets_from_musique(data,llm):
 def main(args):
     model_name = 'llama3:8b'
     token_counter = TokenCountingHandler()
-    Settings.llm = Ollama(model=model_name,request_timeout=120)
+    Settings.llm = Ollama(model=model_name,request_timeout=600.0)
     Settings.callback_manager = CallbackManager([token_counter])
 
     data_dir = '../../data/MuSiQue'

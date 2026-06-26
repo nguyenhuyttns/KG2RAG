@@ -43,7 +43,7 @@ def read_data(args):
     return data
 
 def init_model(args):
-    Settings.llm = Ollama(model=args.model_name,request_timeout=200)
+    Settings.llm = Ollama(model=args.model_name,request_timeout=600.0)
     Settings.embed_model = OllamaEmbedding(model_name=args.embed_model_name)
 
 def read_kg(args,data):

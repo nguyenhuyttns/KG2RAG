@@ -33,7 +33,7 @@ with open(data_path) as f:
     data = json.load(f)
 
 triplets = {}
-llm = Ollama(model='mistral',request_timeout=120)
+llm = Ollama(model='mistral',request_timeout=600.0)
 out_dir = '../../data/trivia_qa/kgs/extracted_subkgs'
 if not os.path.exists(out_dir):
     os.makedirs(out_dir)

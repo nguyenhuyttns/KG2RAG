@@ -108,7 +108,7 @@ def main(args):
 
     model_name = args.model_name
     print('Init Ollama model')
-    Settings.llm = Ollama(model=model_name,request_timeout=200)
+    Settings.llm = Ollama(model=model_name,request_timeout=600.0)
     embed_model_name = args.embed_model_name
     print('Init Ollama embedding')
     Settings.embed_model = OllamaEmbedding(model_name=embed_model_name)
